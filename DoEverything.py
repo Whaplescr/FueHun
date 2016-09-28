@@ -39,35 +39,45 @@ stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
 
 data_list = []
 
+
 data = wf.readframes(chunk_size)
 while len(data) > 0:
 
     avg = 0
-    abs_list = []
+    chunk_list = []
     plot_list = []
+    diff_list = []
+
+    prev_point = 0
 
     for point in data:
-        abs_list.append(point)
+        if prev_point == 0:
+            prev_point = point
+        else:
+            diff_list.append(prev_point-point)
+            prev_point = point
+
+        chunk_list.append(point)
         data_list.append(point)
 
-    avg = sum(abs_list)/len(abs_list)
-    for point in abs_list:
-        plot_list.append(avg-point)
+    avg = sum(chunk_list) / len(chunk_list)
+    for point in chunk_list:
+        diff = avg-point
+        plot_list.append(diff)
 
 
-    plt.scatter(range(0, len(plot_list)), plot_list)
-    plt.show()
+    # plt.plot(range(0, len(plot_list)), plot_list)
+    # plt.show()
+
+    # plt.plot(range(0, len(diff_list)), diff_list)
+    # plt.show()
 
     stream.write(data)
     data = wf.readframes(chunk_size)
 
 
-    # TODO: Let's consider assigning each light to a function
-    # TODO: So one light will be the max in a chunk, one the min, and one the average
-    # Further note, this doesnt work very well, we encounter the max of 255 VERY quickly, like every 7th sample or so
-
 # Plotting frequencies of the sound clip
-plt.scatter(range(0, len(data_list)), data_list)
+plt.plot(range(0, len(data_list)), data_list)
 plt.show()
 
 # Stop stream.
