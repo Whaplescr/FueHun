@@ -27,6 +27,8 @@ except EOFError as eofe:
     sys.stderr.write('EOFError on file ' + wav_filename + '\n' + \
                      str(eofe) + '. Skipping.\n')
 
+#TODO: Update the wav file player to an object
+#TODO: initialize player with wav file state items using wf.getparams()
 #frames
 frames = wf.getnframes()
 # Framerate
@@ -38,8 +40,7 @@ print(duration)
 
 #TODO: Looks like doing one light call per read of the buffer will give us ~40 calls
 #TODO: Realisticly we should only be doing 30 calls in the course of 3 seconds (10 calls per light per second)
-#TODO: Things to test, how does the playback respond when we're making 3 calls each loop of the buffer, do we get sound delay?
-#TODO: If we do get sound delay, how does it respond to one light being called once per loop?
+
 
 
 # Instantiate PyAudio.
@@ -50,41 +51,12 @@ stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
                 channels=wf.getnchannels(),
                 rate=wf.getframerate(),
                 output=True)
-
 data_list = []
-
 
 data = wf.readframes(chunk_size)
 while len(data) > 0:
-
-    avg = 0
-    chunk_list = []
-    plot_list = []
-    diff_list = []
-
-    prev_point = 0
-
     for point in data:
-        if prev_point == 0:
-            prev_point = point
-        else:
-            diff_list.append(prev_point-point)
-            prev_point = point
-
-        chunk_list.append(point)
         data_list.append(point)
-
-    avg = sum(chunk_list) / len(chunk_list)
-    for point in chunk_list:
-        diff = avg-point
-        plot_list.append(diff)
-
-
-    plt.plot(range(0, len(plot_list)), plot_list)
-    plt.show()
-
-    # plt.plot(range(0, len(diff_list)), diff_list)
-    # plt.show()
 
     stream.write(data)
     data = wf.readframes(chunk_size)
@@ -100,6 +72,3 @@ stream.close()
 
 # Close PyAudio.
 p.terminate()
-
-#for point in decoded:
-#    print(point)
