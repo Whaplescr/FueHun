@@ -1,5 +1,5 @@
 import requests
-from Helpers.HueElement import HueElement
+from HueElements.HueElement import HueElement
 from json import loads,dumps
 
 class Light(HueElement):
