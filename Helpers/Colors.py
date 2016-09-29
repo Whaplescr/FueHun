@@ -18,4 +18,3 @@ class ColorHelper:
     def get_random_color(self):
         colors = self.get_color_dict()
         return random.choice(list(colors.items()))
-

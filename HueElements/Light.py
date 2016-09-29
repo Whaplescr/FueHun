@@ -7,7 +7,6 @@ class Light(HueElement):
     _on_json = dumps({"on": True})
     _off_json = dumps({"on":False})
 
-    # Initialize the Light object with all of it's info elements
     def __init__(self,light_number):
         self.light_number = light_number
         self.light_url = self.api_url + "/lights/%d" %(self.light_number)
@@ -35,20 +34,24 @@ class Light(HueElement):
         self.unique_id = light_info["uniqueid"]
         self.sw_version = light_info["swversion"]
 
-    # Get all the info for a light
+    # TODO: Need to write test scripts for each of the methods
+    # TODO: Commenting for methods
+
     def get_light_info(self):
+        """
+        Calls the request for a light to get it's state and identification information
+        :return: returns decompressed json data
+        """
         light_call = requests.get(self.light_url)
         info = loads(light_call.text)
         return info
 
-    # Turns on the light
     def turn_on(self):
         on_call = requests.put(self.light_url +"/state",self._on_json)
         if on_call.status_code == 200:
             self.on = True
         return on_call
 
-    # Turns off the light
     def turn_off(self):
         off_call = requests.put(self.light_url + "/state",self._off_json)
         if off_call.status_code == 200:
@@ -71,7 +74,7 @@ class Light(HueElement):
         self.reachable = state_info["reachable"]
 
     # TODO: Need to update the logic that confirms whether or not calls were made successfully
-    # TODO: Status code of 200 isnt sufficient
+    # TODO: Status code of 200 isn't sufficient
     def change_brightness(self,brightness):
         bri = dumps({"bri":brightness})
         bri_request = requests.put(self.light_url + "/state",bri)

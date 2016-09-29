@@ -1,7 +1,6 @@
 from collections import deque
 from HueElements.Light import Light
 from Helpers.Colors import ColorHelper
-from time import sleep
 
 lights = deque([Light(2),Light(4),Light(5)])
 
