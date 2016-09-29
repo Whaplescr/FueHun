@@ -1,17 +1,9 @@
 import pyaudio
 import matplotlib.pyplot as plt
-from HueElements.Light import Light
 from WavElements.WavFile import WaveFile
 
 #wav_filename = 'onclassical_demo_ensemble-la-tempesta_porpora_iii-notturno_iii-lezione_live_small-version.wav'
 wav_filename = 'woop.wav'
-
-
-new_light = Light(light_number=2)
-new_light.turn_off()
-assert new_light.on == False
-new_light.turn_on()
-assert new_light.on == True
 
 # Instantiate PyAudio.
 p = pyaudio.PyAudio()
