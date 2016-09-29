@@ -1,65 +1,46 @@
-import wave
 import pyaudio
-import sys
-import numpy
-import requests
-from json import dumps
-from collections import deque
-from Helpers.Colors import ColorHelper
 import matplotlib.pyplot as plt
-
-lights = [2,4,5]
-queue = deque(lights)
+from HueElements.Light import Light
+from WavElements.WavFile import WaveFile
 
 #wav_filename = 'onclassical_demo_ensemble-la-tempesta_porpora_iii-notturno_iii-lezione_live_small-version.wav'
 wav_filename = 'woop.wav'
+
 chunk_size = 1024
 
-
-try:
-    print
-    'Trying to play file ' + wav_filename
-    wf = wave.open(wav_filename, 'rb')
-except IOError as ioe:
-    sys.stderr.write('IOError on file ' + wav_filename + '\n' + \
-                     str(ioe) + '. Skipping.\n')
-except EOFError as eofe:
-    sys.stderr.write('EOFError on file ' + wav_filename + '\n' + \
-                     str(eofe) + '. Skipping.\n')
-
-#TODO: Update the wav file player to an object
-#TODO: initialize player with wav file state items using wf.getparams()
-#frames
-frames = wf.getnframes()
-# Framerate
-rate = wf.getframerate()
-
-duration = frames/rate
-print(frames)
-print(duration)
-
-#TODO: Looks like doing one light call per read of the buffer will give us ~40 calls
-#TODO: Realisticly we should only be doing 30 calls in the course of 3 seconds (10 calls per light per second)
-
-
+new_light = Light(light_number=2)
+new_light.turn_off()
+assert new_light.on == False
+new_light.turn_on()
+assert new_light.on == True
 
 # Instantiate PyAudio.
 p = pyaudio.PyAudio()
 
+wave =  WaveFile(wav_filename)
+wf = wave.wf
+
 # Open stream.
 stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
-                channels=wf.getnchannels(),
-                rate=wf.getframerate(),
+                channels=wave.n_channels,
+                rate=wave.framerate,
                 output=True)
 data_list = []
 
-data = wf.readframes(chunk_size)
-while len(data) > 0:
-    for point in data:
-        data_list.append(point)
+data_chunks = wave.chop_chunks()
 
-    stream.write(data)
-    data = wf.readframes(chunk_size)
+# data = wf.readframes(chunk_size)
+# while len(data) > 0:
+#     for point in data:
+#         data_list.append(point)
+#
+#     stream.write(data)
+#     data = wf.readframes(chunk_size)
+
+for chunk in data_chunks:
+    for point in chunk:
+        data_list.append(point)
+    stream.write(chunk)
 
 
 # Plotting frequencies of the sound clip
