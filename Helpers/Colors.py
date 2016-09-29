@@ -1,7 +1,10 @@
 import random
-import ast
 
 class ColorHelper:
+
+    @property
+    def color_dictionary(self):
+        return self.get_color_dict()
 
     def get_color_dict(self):
         color_dictionary  = {}
@@ -16,5 +19,12 @@ class ColorHelper:
         return color_dictionary
 
     def get_random_color(self):
-        colors = self.get_color_dict()
+        colors = self.color_dictionary
         return random.choice(list(colors.items()))
+
+    def get_color_by_name(self,color):
+        colors = self.color_dictionary
+        if color in colors:
+            return colors[color]
+        else:
+            raise("Color %s was not found in the color dictionary" %color)
