@@ -1,5 +1,9 @@
 import wave
 import sys
+import numpy as np
+import matplotlib.pyplot as plt
+import math
+
 
 class WaveFile:
 
@@ -8,11 +12,12 @@ class WaveFile:
         self.file_path = file_path
         self.wf = self.open_file()
 
-        self.frame_count = self.wf.getnframes()
+        self.sample_rate = self.wf.getframerate()
+        self.amp_width = self.wf.getsampwidth()
+        self.nChannels = self.wf.getnchannels()
+        self.nFrames = self.wf.getnframes()
         self.framerate = self.wf.getframerate()
-        self.duration = self.frame_count / self.framerate
 
-        self.n_channels = self.wf.getnchannels()
 
     def open_file(self):
         try:
@@ -28,7 +33,10 @@ class WaveFile:
 
         data = self.wf.readframes(chunk_size)
         while len(data) > 0:
-            chopped_chunks.append(data)
+            data_convert = []
+            for point in data:
+                data_convert.append(int(point))
+            chopped_chunks.append(data_convert)
             data = self.wf.readframes(chunk_size)
 
         return chopped_chunks

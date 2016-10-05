@@ -20,7 +20,7 @@ class ColorHelper:
 
     def get_random_color(self):
         colors = self.color_dictionary
-        return random.choice(list(colors.items()))
+        return random.choice(list(colors.values()))
 
     def get_color_by_name(self,color):
         colors = self.color_dictionary
