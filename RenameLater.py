@@ -70,7 +70,7 @@ def do_fft_stuff(file_name,sample_size=1024):
     print(np.interp(high_powers,[h_min,h_max],[1,254]))
 
 
-
 do_fft_stuff('woop.wav')
+#do_fft_stuff('onclassical_demo_ensemble-la-tempesta_porpora_iii-notturno_iii-lezione_live_small-version.wav')
 #print("")
 #do_fft_stuff('SongSparrow].wav')
