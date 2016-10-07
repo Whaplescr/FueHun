@@ -66,6 +66,38 @@ print(bass_d)
 print(mid_d)
 print(high_d)
 
+diff_bass = []
+for i in range(0,len(bass_d)):
+    try:
+        diff_bass.append(abs(bass_d[i]-bass_d[i+1]))
+    except:
+        pass
+
+print("")
+print(diff_bass)
+
+
+diff_mid = []
+for i in range(0,len(mid_d)):
+    try:
+        diff_mid.append(abs(mid_d[i]-mid_d[i+1]))
+    except:
+        pass
+
+print("")
+print(diff_mid)
+
+
+diff_high = []
+for i in range(0,len(high_d)):
+    try:
+        diff_bass.append(abs(high_d[i]-high_d[i+1]))
+    except:
+        pass
+
+print("")
+print(diff_high)
+
 # Instantiate PyAudio.
 # p = pyaudio.PyAudio()
 
