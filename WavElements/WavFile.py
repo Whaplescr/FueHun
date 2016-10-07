@@ -40,3 +40,15 @@ class WaveFile:
             data = self.wf.readframes(chunk_size)
 
         return chopped_chunks
+
+    def get_hz_per_bin(self,fft_size):
+        print(self.sample_rate)
+        print(self.sample_rate/2)
+        print((self.sample_rate/2)/ fft_size)
+        return (self.sample_rate/2) / fft_size
+
+    def get_bass_bands(self,band_size,fft_size=512):
+        return math.ceil(200/band_size)
+
+    def get_mid_bands(self,band_size,fft_size=512):
+        return math.ceil(1500/band_size)
