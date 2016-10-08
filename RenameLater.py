@@ -5,7 +5,7 @@ from HueElements.Light import Light
 from WavElements.WavFile import WaveFile
 
 
-def do_fft_stuff(file_name,sample_size=1024):
+def do_fft_stuff(file_name,sample_size=2048):
 
     wave = WaveFile(file_name)
     framerate = wave.framerate
@@ -89,7 +89,7 @@ def do_fft_stuff(file_name,sample_size=1024):
     #Close PyAudio.
     p.terminate()
 
-#do_fft_stuff('woop.wav')
-do_fft_stuff('onclassical_demo_ensemble-la-tempesta_porpora_iii-notturno_iii-lezione_live_small-version.wav')
+do_fft_stuff('woop.wav',2048)
+do_fft_stuff('SongSparrow].wav',2048)
+do_fft_stuff('onclassical_demo_ensemble-la-tempesta_porpora_iii-notturno_iii-lezione_live_small-version.wav',8192)
 #print("")
-#do_fft_stuff('SongSparrow].wav')
