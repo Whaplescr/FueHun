@@ -1,6 +1,8 @@
 import requests
 from HueElements.HueElement import HueElement
 from json import loads,dumps
+from Helpers.Colors import ColorHelper
+
 
 class Light(HueElement):
 
@@ -123,3 +125,9 @@ class Light(HueElement):
             return True
         else:
             return False
+
+    def change_color_by_name(self,color):
+        ch = ColorHelper()
+
+        named_xy = dumps({"xy":ch.get_color_by_name(color)})
+        color_request = requests.put(self.light_url + "/state",named_xy)

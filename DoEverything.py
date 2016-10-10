@@ -109,3 +109,34 @@ print(diff_high)
 
 # Close PyAudio.
 # p.terminate()
+
+#
+# bass_power = 0
+# for val in bass_bands:
+#     bass_power += val
+# bass_power = int(np.real(bass_power))
+#
+# mid_power = 0
+# for val in mid_bands:
+#     mid_power += val
+# mid_power = int(np.real(mid_power))
+#
+# high_power = 0
+# for val in high_bands:
+#     high_power += val
+# high_power = int(np.real(high_power))
+#
+# bass_powers.append(bass_power)
+# mid_powers.append(mid_power)
+# high_powers.append(high_power)
+#
+# b_min = min(bass_powers)
+# b_max = max(bass_powers)
+# m_min = max(mid_powers)
+# m_max = max(mid_powers)
+# h_min = min(high_powers)
+# h_max = max(high_powers)
+#
+# print(np.interp(bass_powers, [b_min, b_max], [1, 254]))
+# print(np.interp(mid_powers, [m_min, m_max], [1, 254]))
+# print(np.interp(high_powers, [h_min, h_max], [1, 254]))
