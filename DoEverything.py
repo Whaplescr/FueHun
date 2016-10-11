@@ -1,142 +1,110 @@
 import pyaudio
-import matplotlib.pyplot as plt
-from WavElements.WavFile import WaveFile
-import math
 import numpy as np
-from time import sleep
+import matplotlib.pyplot as plt
+from HueElements.Light import Light
+from WavElements.WavFile import WaveFile
 
 
+def do_fft_stuff(file_name,sample_size=1024):#2048):
 
-#wav_filename = 'onclassical_demo_ensemble-la-tempesta_porpora_iii-notturno_iii-lezione_live_small-version.wav'
-#wav_filename = 'SongSparrow].wav'
-wav_filename = 'woop.wav'
+    wave = WaveFile(file_name)
+    framerate = wave.framerate
 
-wave =  WaveFile(wav_filename)
-framerate = wave.framerate
-fft_size = 1024
+    # Get the size of the bands, i.e. what does each bin of the sample represent in terms of hz
+    band_size = wave.get_hz_per_bin(sample_size/2)
 
-data_chunks = wave.chop_chunks(1024)
+    # Calculate the inded
+    b_i = wave.get_bass_bands(band_size)
+    m_i = wave.get_mid_bands(band_size)
 
-bass_d = []
-mid_d = []
-high_d = []
+    # Pre break up the samples of damage
+    # TODO: Convert the reading + analysis to real time
+    data_chunks = wave.chop_chunks(sample_size)
 
-# This looks like awesome results sofar, still wondering why rfft gives me 513
-# TODO: Try this same code with np.fft[0:len/2] and see what the results give
-# TODO: Other todo is to figure out how we're gonna map these bass,mid and high powers to light changes
+    # Instantiate PyAudio.
+    p = pyaudio.PyAudio()
 
-for chunk in data_chunks:
-
-    # I dont know why getting the the rfft gives us 513 instead of 512
-    rfft = np.fft.rfft(chunk)
-    #print(len(rfft))
-
-    bass_vals = rfft[0:20]
-    mids = rfft[20:300]
-    highs = rfft[300:]
-
-    bass_power = 0
-    for val in bass_vals:
-        bass_power += val
-    bass_power = int(np.real(bass_power))
-
-    mid_power = 0
-    for val in mids:
-        mid_power += val
-    mid_power = int(np.real(mid_power))
-
-    high_power = 0
-    for val in highs:
-        high_power += val
-    high_power = int(np.real(high_power))
+    # Open audio stream for writing
+    stream = p.open(format=p.get_format_from_width(wave.amp_width),
+                channels = wave.nChannels,
+                rate = framerate,
+                output = True)
 
 
-    bass_d.append(bass_power)
-    mid_d.append(mid_power)
-    high_d.append(int(high_power))
+    all_bass = []
+    all_mid = []
+    all_high = []
 
-    #print(np.real(bass_power))
-    #print(np.real(mid_power))
-    #print(np.real(high_power))
+    # Parse the sampled signal
+    for chunk in data_chunks:
+        # In case one of the samples size is less than expected, pad it with 0's
+        if len(chunk) < sample_size:
+            remainder = sample_size - len(chunk)
+            zeroes = [0] * remainder
+            chunk = chunk + zeroes
 
-    #plt.plot(rfft)
-    #plt.show()
+        # Get the real portion of the fft of the sample
+        fft = np.fft.fft(chunk)
+        rfft = np.real(fft[0:round(len(fft)/2)])
 
-print(bass_d)
-print(mid_d)
-print(high_d)
+        # Seperate the bands of the sample
 
-diff_bass = []
-for i in range(0,len(bass_d)):
-    try:
-        diff_bass.append(abs(bass_d[i]-bass_d[i+1]))
-    except:
-        pass
+        bass_bands = rfft[0:b_i]
+        mid_bands = rfft[b_i:m_i]
+        high_bands = rfft[m_i:len(rfft)]
 
-print("")
-print(diff_bass)
+        all_bass.append(bass_bands)
+        all_mid.append(mid_bands)
+        all_high.append(high_bands)
 
+    bass_coeffs = []
 
-diff_mid = []
-for i in range(0,len(mid_d)):
-    try:
-        diff_mid.append(abs(mid_d[i]-mid_d[i+1]))
-    except:
-        pass
+    for band in all_bass:
+        for band_2 in all_bass:
+            if np.array_equal(band,band_2):
+                #pass
+                bass_coeffs.append(1)
+            else:
+                ccorr = np.corrcoef(band,band_2)
+                bass_coeffs.append(ccorr[0][1])
 
-print("")
-print(diff_mid)
+    axes = plt.gca()
+    axes.set_ylim([-2,2])
+    plt.plot(bass_coeffs)
 
+    mid_coeffs = []
+    for band in all_mid:
+        for band_2 in all_mid:
+            if np.array_equal(band,band_2):
+                # pass
+                mid_coeffs.append(1)
+            else:
+                ccorr = np.corrcoef(band,band_2)
+                mid_coeffs.append(ccorr[0,1])
 
-diff_high = []
-for i in range(0,len(high_d)):
-    try:
-        diff_bass.append(abs(high_d[i]-high_d[i+1]))
-    except:
-        pass
+    plt.plot(mid_coeffs)
 
-print("")
-print(diff_high)
+    high_coeffs = []
+    for band in all_high:
+        for band_2 in all_high:
+            if np.array_equal(band,band_2):
+                # pass
+                high_coeffs.append(1)
+            else:
+                ccorr = np.corrcoef(band,band_2)
+                high_coeffs.append(ccorr[0,1])
 
-# Instantiate PyAudio.
-# p = pyaudio.PyAudio()
+    plt.plot(high_coeffs)
+    plt.show()
 
-#for chunk in data_chunks:
-    #stream.write(chunk)
+    # stream.stop_stream()
+    # stream.close()
+    #
+    # #Close PyAudio.
+    # p.terminate()
 
-# stream.stop_stream()
-# stream.close()
+do_fft_stuff('woop.wav',1024)
 
-# Close PyAudio.
-# p.terminate()
+#do_fft_stuff('SongSparrow].wav',2048)
 
-#
-# bass_power = 0
-# for val in bass_bands:
-#     bass_power += val
-# bass_power = int(np.real(bass_power))
-#
-# mid_power = 0
-# for val in mid_bands:
-#     mid_power += val
-# mid_power = int(np.real(mid_power))
-#
-# high_power = 0
-# for val in high_bands:
-#     high_power += val
-# high_power = int(np.real(high_power))
-#
-# bass_powers.append(bass_power)
-# mid_powers.append(mid_power)
-# high_powers.append(high_power)
-#
-# b_min = min(bass_powers)
-# b_max = max(bass_powers)
-# m_min = max(mid_powers)
-# m_max = max(mid_powers)
-# h_min = min(high_powers)
-# h_max = max(high_powers)
-#
-# print(np.interp(bass_powers, [b_min, b_max], [1, 254]))
-# print(np.interp(mid_powers, [m_min, m_max], [1, 254]))
-# print(np.interp(high_powers, [h_min, h_max], [1, 254]))
+#do_fft_stuff('onclassical_demo_ensemble-la-tempesta_porpora_iii-notturno_iii-lezione_live_small-version.wav',8192)

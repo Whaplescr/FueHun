@@ -58,7 +58,7 @@ def do_fft_stuff(file_name,sample_size=1024):#2048):
         # Get the real portion of the fft of the sample
         fft = np.fft.fft(chunk)
         rfft = np.real(fft[0:round(len(fft)/2)])
-        data_file.write(str(rfft))
+        data_file.write(str(chunk))
 
         for point in rfft:
             if point in data_dict.keys():
