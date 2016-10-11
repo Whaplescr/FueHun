@@ -38,9 +38,9 @@ def do_fft_stuff(file_name,sample_size=2048):
     mid_light.turn_on()
     high_light.turn_on()
 
-    bass_light.change_color_by_name(color = 'Blue')
+    bass_light.change_color_by_name(color = 'Orange')
     mid_light.change_color_by_name(color = 'Yellow')
-    high_light.change_color_by_name(color = 'Red')
+    high_light.change_color_by_name(color = 'Maroon')
 
     high_low = wave.get_low_highs(data_chunks,b_i,m_i)
 
@@ -89,7 +89,8 @@ def do_fft_stuff(file_name,sample_size=2048):
     #Close PyAudio.
     p.terminate()
 
-do_fft_stuff('woop.wav',2048)
-do_fft_stuff('SongSparrow].wav',2048)
-do_fft_stuff('onclassical_demo_ensemble-la-tempesta_porpora_iii-notturno_iii-lezione_live_small-version.wav',8192)
+do_fft_stuff('Big_Baby_D.wav',16384)
+#do_fft_stuff('woop.wav',4096)
+#do_fft_stuff('SongSparrow].wav',2048)
+#do_fft_stuff('onclassical_demo_ensemble-la-tempesta_porpora_iii-notturno_iii-lezione_live_small-version.wav',8192)
 #print("")
