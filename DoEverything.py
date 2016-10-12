@@ -50,8 +50,11 @@ def do_fft_stuff(file_name,sample_size=1024):#2048):
         # Seperate the bands of the sample
 
         bass_bands = rfft[0:b_i]
+        print(max(bass_bands))
         mid_bands = rfft[b_i:m_i]
+        print(max(mid_bands))
         high_bands = rfft[m_i:len(rfft)]
+        print(max(high_bands))
 
         all_bass.append(bass_bands)
         all_mid.append(mid_bands)
@@ -59,40 +62,40 @@ def do_fft_stuff(file_name,sample_size=1024):#2048):
 
     bass_coeffs = []
 
-    for band in all_bass:
-        for band_2 in all_bass:
-            if np.array_equal(band,band_2):
-                #pass
-                bass_coeffs.append(1)
-            else:
-                ccorr = np.corrcoef(band,band_2)
-                bass_coeffs.append(ccorr[0][1])
-
-    axes = plt.gca()
-    axes.set_ylim([-2,2])
-    plt.plot(bass_coeffs)
-
-    mid_coeffs = []
-    for band in all_mid:
-        for band_2 in all_mid:
-            if np.array_equal(band,band_2):
-                # pass
-                mid_coeffs.append(1)
-            else:
-                ccorr = np.corrcoef(band,band_2)
-                mid_coeffs.append(ccorr[0,1])
-
-    plt.plot(mid_coeffs)
-
-    high_coeffs = []
-    for band in all_high:
-        for band_2 in all_high:
-            if np.array_equal(band,band_2):
-                # pass
-                high_coeffs.append(1)
-            else:
-                ccorr = np.corrcoef(band,band_2)
-                high_coeffs.append(ccorr[0,1])
+    # for band in all_bass:
+    #     for band_2 in all_bass:
+    #         if np.array_equal(band,band_2):
+    #             #pass
+    #             bass_coeffs.append(1)
+    #         else:
+    #             ccorr = np.corrcoef(band,band_2)
+    #             bass_coeffs.append(ccorr[0][1])
+    #
+    # axes = plt.gca()
+    # axes.set_ylim([-2,2])
+    # plt.plot(bass_coeffs)
+    #
+    # mid_coeffs = []
+    # for band in all_mid:
+    #     for band_2 in all_mid:
+    #         if np.array_equal(band,band_2):
+    #             # pass
+    #             mid_coeffs.append(1)
+    #         else:
+    #             ccorr = np.corrcoef(band,band_2)
+    #             mid_coeffs.append(ccorr[0,1])
+    #
+    # plt.plot(mid_coeffs)
+    #
+    # high_coeffs = []
+    # for band in all_high:
+    #     for band_2 in all_high:
+    #         if np.array_equal(band,band_2):
+    #             # pass
+    #             high_coeffs.append(1)
+    #         else:
+    #             ccorr = np.corrcoef(band,band_2)
+    #             high_coeffs.append(ccorr[0,1])
 
     plt.plot(high_coeffs)
     plt.show()
